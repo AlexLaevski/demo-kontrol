@@ -15,56 +15,119 @@ section>pre{background:var(--code);padding:14px;border-radius:8px}
 </style></head><body><main><h1>Демо контроль</h1>
 <p class="sub">Python, задания 1–5 · <a href="https://github.com/AlexLaevski/demo-kontrol">исходники на GitHub</a></p>
 <section><h2>Задание 1</h2><p>Списки длиннее 3: третий элемент += сумма хвоста, хвост удаляется</p>
-<pre><code>lst = [[1, 2], [3, 4, 4, 3, 1], [4, 1, 4, 5]]
-for x in lst:
-    if len(x) &gt; 3:
-        x[2] += sum(x[3:])
-        del x[3:]
+<pre><code># Решение 1.
+lst = [[1, 2], [3, 4, 4, 3, 1], [4, 1, 4, 5]]
+for s in lst:
+    if len(s) &gt; 3:
+        s[2] = s[2] + sum(s[3:])
+        del s[3:]
 print(lst)
 </code></pre>
-<div class="out"><span>Вывод</span><pre>[[1, 2], [3, 4, 8], [4, 1, 9]]</pre></div></section><section><h2>Задание 2</h2><p>Вставка числа в убывающий список с сохранением порядка</p>
-<pre><code>my_list = [7, 5, 3, 3, 2]
-n = int(input(&quot;Новый элемент: &quot;))
+<div class="out"><span>Вывод</span><pre>[[1, 2], [3, 4, 8], [4, 1, 9]]</pre></div></section><section><h2>Задание 2</h2><p>Вставка числа в убывающий список с сохранением порядка. Буквы и пустой ввод не ломают программу — она переспрашивает</p>
+<pre><code># Решение 2.
+my_list = [7, 5, 3, 3, 2]
+
+while True:
+    s = input(&#x27;Новый элемент: &#x27;).strip()
+    try:
+        n = int(s)
+        break
+    except ValueError:
+        print(&#x27;Ошибка: нужно целое число, например 4. Попробуй ещё раз&#x27;)
+
 i = 0
 while i &lt; len(my_list) and my_list[i] &gt;= n:
     i += 1
 my_list.insert(i, n)
 print(my_list)
 </code></pre>
-<div class="out"><span>Вывод</span><pre>Новый элемент: 4
-[7, 5, 4, 3, 3, 2]</pre></div></section><section><h2>Задание 3</h2><p>Словарь «имя → действие» из строки, отсортированный по имени</p>
-<pre><code>s = &quot;Иван ест, поет Оля, дома Борис, закупается Женя&quot;
-d = dict(sorted({(a if a[0].isupper() else b): (b if a[0].isupper() else a) for a, b in (p.split() for p in s.split(&quot;, &quot;))}.items()))
-print(d)
+<div class="out"><span>Вывод</span><pre>Новый элемент: abc
+Ошибка: нужно целое число, например 4. Попробуй ещё раз
+Новый элемент: 4.5
+Ошибка: нужно целое число, например 4. Попробуй ещё раз
+Новый элемент: 4
+[7, 5, 4, 3, 3, 2]</pre></div></section><section><h2>Задание 3</h2><p>Словарь «имя → действие» из строки, отсортированный по имени. Неправильные куски показываются, строку просят ввести заново</p>
+<pre><code># Решение 3.
+while True:
+    s = input(&#x27;Строка: &#x27;)
+    m = [p.split() for p in s.split(&#x27;,&#x27;) if p.strip()]
+    ok = len(m) &gt; 0
+    for p in m:
+        if len(p) != 2 or not p[0].isalpha() or not p[1].isalpha() or p[0][0].isupper() == p[1][0].isupper():
+            print(&#x27;Не понял кусок:&#x27;, &#x27; &#x27;.join(p))
+            ok = False
+    if ok:
+        break
+    print(&#x27;Пиши через запятую пары из двух слов: Имя с заглавной, занятие со строчной. Пример: Иван ест, поет Оля&#x27;)
+
+print(dict(sorted({(a if a[0].isupper() else b): (b if a[0].isupper() else a) for a, b in m}.items())))
 </code></pre>
-<div class="out"><span>Вывод</span><pre>{&#x27;Борис&#x27;: &#x27;дома&#x27;, &#x27;Женя&#x27;: &#x27;закупается&#x27;, &#x27;Иван&#x27;: &#x27;ест&#x27;, &#x27;Оля&#x27;: &#x27;поет&#x27;}</pre></div></section><section><h2>Задание 4</h2><p>Сложение / умножение смешанных дробей</p>
-<pre><code>from fractions import Fraction
+<div class="out"><span>Вывод</span><pre>Строка: иван ест
+Не понял кусок: иван ест
+Пиши через запятую пары из двух слов: Имя с заглавной, занятие со строчной. Пример: Иван ест, поет Оля
+Строка: Иван ест, поет Оля, дома Борис, закупается Женя
+{&#x27;Борис&#x27;: &#x27;дома&#x27;, &#x27;Женя&#x27;: &#x27;закупается&#x27;, &#x27;Иван&#x27;: &#x27;ест&#x27;, &#x27;Оля&#x27;: &#x27;поет&#x27;}</pre></div></section><section><h2>Задание 4</h2><p>Калькулятор дробей (+ и *): числа вида 5, 2/3, 1 3/5. Буквы, лишние операции и ноль в знаменателе ловятся</p>
+<pre><code># Решение 4.
+from fractions import Fraction
 
 def chislo(t):
-    p = t.split()
-    if len(p) == 2:
-        return int(p[0]) + Fraction(p[1])
-    return Fraction(p[0])
+    # t - части одного числа: [&#x27;5&#x27;], [&#x27;2/3&#x27;] или [&#x27;1&#x27;, &#x27;3/5&#x27;]
+    if len(t) == 1 and t[0].isdigit():
+        return Fraction(int(t[0]))
+    if len(t) == 1:
+        cel = 0
+        drob = t[0]
+    elif len(t) == 2 and t[0].isdigit():
+        cel = int(t[0])
+        drob = t[1]
+    else:
+        raise ValueError
+    p = drob.split(&#x27;/&#x27;)
+    if len(p) != 2 or not p[0].isdigit() or not p[1].isdigit():
+        raise ValueError
+    if int(p[1]) == 0:
+        raise ZeroDivisionError
+    return cel + Fraction(int(p[0]), int(p[1]))
 
-e = input(&quot;Выражение: &quot;)
-if &quot; + &quot; in e:
-    a, b = e.split(&quot; + &quot;)
-    r = chislo(a) + chislo(b)
+while True:
+    s = input(&#x27;Выражение: &#x27;).replace(&#x27;+&#x27;, &#x27; + &#x27;).replace(&#x27;*&#x27;, &#x27; * &#x27;).split()
+    if s.count(&#x27;+&#x27;) + s.count(&#x27;*&#x27;) != 1:
+        print(&#x27;Ошибка: нужна ровно одна операция + или *. Пример: 1 3/5 + 2/3&#x27;)
+        continue
+    oper = &#x27;+&#x27; if &#x27;+&#x27; in s else &#x27;*&#x27;
+    k = s.index(oper)
+    try:
+        f1 = chislo(s[:k])
+        f2 = chislo(s[k + 1:])
+        break
+    except ValueError:
+        print(&#x27;Ошибка: числа пишутся так: 5, 2/3 или 1 3/5&#x27;)
+    except ZeroDivisionError:
+        print(&#x27;Ошибка: знаменатель не может быть 0&#x27;)
+
+if oper == &#x27;+&#x27;:
+    ans = f1 + f2
 else:
-    a, b = e.split(&quot; * &quot;)
-    r = chislo(a) * chislo(b)
-cel = r.numerator // r.denominator
-ost = r - cel
-if cel and ost:
-    print(cel, ost)
-elif cel:
-    print(cel)
+    ans = f1 * f2
+
+cel = ans.numerator // ans.denominator
+ost = ans - cel
+if cel != 0 and ost != 0:
+    otvet = str(cel) + &#x27; &#x27; + str(ost)
+elif cel != 0:
+    otvet = str(cel)
 else:
-    print(ost)
+    otvet = str(ost)
+print(&#x27; &#x27;.join(s), &#x27;-&gt;&#x27;, otvet)
 </code></pre>
-<div class="out"><span>Вывод</span><pre>Выражение: 1 1/2 + 2/3
-2 1/6</pre></div></section><section><h2>Задание 5</h2><p>Уникальность значений словаря и ключ с максимальным значением</p>
-<pre><code>d = {&quot;a&quot;: 5, &quot;b&quot;: 9, &quot;c&quot;: 2}
+<div class="out"><span>Вывод</span><pre>Выражение: привет
+Ошибка: нужна ровно одна операция + или *. Пример: 1 3/5 + 2/3
+Выражение: 1/0 + 1/3
+Ошибка: знаменатель не может быть 0
+Выражение: 1 3/5 + 2/3
+1 3/5 + 2/3 -&gt; 2 4/15</pre></div></section><section><h2>Задание 5</h2><p>Уникальность значений словаря и ключ с максимальным значением</p>
+<pre><code># Решение 5.
+d = {&quot;a&quot;: 5, &quot;b&quot;: 9, &quot;c&quot;: 2}
 print(&quot;Все значения уникальны:&quot;, len(set(d.values())) == len(d))
 print(&quot;Ключ с наибольшим значением:&quot;, max(d, key=d.get))
 </code></pre>
