@@ -1,0 +1,72 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Демо контроль</title><style>
+:root{--bg:#fafaf7;--fg:#1d1d1b;--mut:#6b6b66;--card:#fff;--line:#e4e2dc;--code:#f3f1ec;--acc:#2f6f4f}
+@media (prefers-color-scheme:dark){:root{--bg:#151514;--fg:#ecebe6;--mut:#9a9890;--card:#1d1d1b;--line:#2e2d2a;--code:#232320;--acc:#7cc4a0}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:760px;margin:0 auto;padding:32px 16px 64px}h1{margin:0 0 4px;font-size:28px}
+.sub{color:var(--mut);margin:0 0 28px}.sub a{color:var(--acc)}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin:0 0 18px}
+h2{margin:0 0 4px;font-size:18px}section>p{margin:0 0 12px;color:var(--mut)}
+pre{margin:0;overflow-x:auto;font:13.5px/1.5 ui-monospace,Menlo,monospace}
+section>pre{background:var(--code);padding:14px;border-radius:8px}
+.out{margin-top:10px;border-left:3px solid var(--acc);padding:4px 0 4px 12px}
+.out span{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--acc)}
+</style></head><body><main><h1>Демо контроль</h1>
+<p class="sub">Python, задания 1–5 · <a href="https://github.com/AlexLaevski/demo-kontrol">исходники на GitHub</a></p>
+<section><h2>Задание 1</h2><p>Списки длиннее 3: третий элемент += сумма хвоста, хвост удаляется</p>
+<pre><code>lst = [[1, 2], [3, 4, 4, 3, 1], [4, 1, 4, 5]]
+for x in lst:
+    if len(x) &gt; 3:
+        x[2] += sum(x[3:])
+        del x[3:]
+print(lst)
+</code></pre>
+<div class="out"><span>Вывод</span><pre>[[1, 2], [3, 4, 8], [4, 1, 9]]</pre></div></section><section><h2>Задание 2</h2><p>Вставка числа в убывающий список с сохранением порядка</p>
+<pre><code>my_list = [7, 5, 3, 3, 2]
+n = int(input(&quot;Новый элемент: &quot;))
+i = 0
+while i &lt; len(my_list) and my_list[i] &gt;= n:
+    i += 1
+my_list.insert(i, n)
+print(my_list)
+</code></pre>
+<div class="out"><span>Вывод</span><pre>Новый элемент: 4
+[7, 5, 4, 3, 3, 2]</pre></div></section><section><h2>Задание 3</h2><p>Словарь «имя → действие» из строки, отсортированный по имени</p>
+<pre><code>s = &quot;Иван ест, поет Оля, дома Борис, закупается Женя&quot;
+d = dict(sorted({(a if a[0].isupper() else b): (b if a[0].isupper() else a) for a, b in (p.split() for p in s.split(&quot;, &quot;))}.items()))
+print(d)
+</code></pre>
+<div class="out"><span>Вывод</span><pre>{&#x27;Борис&#x27;: &#x27;дома&#x27;, &#x27;Женя&#x27;: &#x27;закупается&#x27;, &#x27;Иван&#x27;: &#x27;ест&#x27;, &#x27;Оля&#x27;: &#x27;поет&#x27;}</pre></div></section><section><h2>Задание 4</h2><p>Сложение / умножение смешанных дробей</p>
+<pre><code>from fractions import Fraction
+
+def chislo(t):
+    p = t.split()
+    if len(p) == 2:
+        return int(p[0]) + Fraction(p[1])
+    return Fraction(p[0])
+
+e = input(&quot;Выражение: &quot;)
+if &quot; + &quot; in e:
+    a, b = e.split(&quot; + &quot;)
+    r = chislo(a) + chislo(b)
+else:
+    a, b = e.split(&quot; * &quot;)
+    r = chislo(a) * chislo(b)
+cel = r.numerator // r.denominator
+ost = r - cel
+if cel and ost:
+    print(cel, ost)
+elif cel:
+    print(cel)
+else:
+    print(ost)
+</code></pre>
+<div class="out"><span>Вывод</span><pre>Выражение: 1 1/2 + 2/3
+2 1/6</pre></div></section><section><h2>Задание 5</h2><p>Уникальность значений словаря и ключ с максимальным значением</p>
+<pre><code>d = {&quot;a&quot;: 5, &quot;b&quot;: 9, &quot;c&quot;: 2}
+print(&quot;Все значения уникальны:&quot;, len(set(d.values())) == len(d))
+print(&quot;Ключ с наибольшим значением:&quot;, max(d, key=d.get))
+</code></pre>
+<div class="out"><span>Вывод</span><pre>Все значения уникальны: True
+Ключ с наибольшим значением: b</pre></div></section></main></body></html>
